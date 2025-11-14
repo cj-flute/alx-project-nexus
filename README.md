@@ -124,6 +124,17 @@ Key flows include:
     -Database schema and optimization notes
     -Postman collection for API testing
 
+Architecture Diagram
+
+![Architecture Diagram](/E-commerce%20arctechture%20for%20alx%20nexus%20project.png)
+
+Frontend consumes the APIs.
+API Layer (Django/DRF) handles logic, validation, authentication.
+Modules manage individual features (products, categories, auth).
+PostgreSQL DB stores relational data.
+
+---
+
 Project Objective
 Learners will create a GitHub repository named alx-project-nexus that serves as a documentation hub for their major learnings from the ProDev Backend Engineering program. This repository will showcase their understanding of backend engineering concepts, tools, and best practices.✅
 
