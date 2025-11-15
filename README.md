@@ -1,4 +1,4 @@
-#E-Commerce Backend#
+**E-Commerce Backend**
 
 **Real-World Application**
 The e-commerce backend simulates a real-world development environment, emphasizing scalability, security, and performance. Participants will: - Design and optimize relational database schemas. - Build and document APIs for frontend integration. - Enhance backend performance through query optimization and indexing.
@@ -35,6 +35,7 @@ Core Technical Goals
    - Single hosted API docs URL for frontend or external consumers
 
 **Functional Requirements**
+
 A. User Management (JWT)
 
     - Users should be able to register and log in.
