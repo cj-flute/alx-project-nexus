@@ -26,3 +26,18 @@ class RegisterSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'date_joined',
+            'is_active',
+            'is_staff'
+        ]

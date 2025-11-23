@@ -3,11 +3,15 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """
-    Custom user model extending Django's AbstracUser.
-    Easily expandable for future e-commerce features.
-    """
-    pass
+    email = models.EmailField('email address', unique=True)
+    username = models.CharField(max_length=150, unique=True)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
 
 
 class Category(models.Model):
