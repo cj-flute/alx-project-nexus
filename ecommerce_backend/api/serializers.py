@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Category
 
 User = get_user_model()
 
@@ -25,7 +26,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 # SimpleJWT + Django expects username but it need to overrriden by creating this class
 
 class EmailLoginSerializer(serializers.Serializer):
-    username_field = "email"
+    # username_field = "username"
+    pass
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,10 +43,17 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         email = attrs.get("email")
         password = attrs.get("password")
+        # Try to find the user by email and verify the password. Using
+        # `authenticate(username=email, ...)` assumes the project's
+        # `USERNAME_FIELD` is `email` (or a custom authentication backend
+        # that supports email). A quick, robust approach is to lookup the
+        # user by email and call `check_password`.
+        try:
+            user = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid email or password")
 
-        user = authenticate(username=email, password=password)
-
-        if not user:
+        if not user.check_password(password):
             raise serializers.ValidationError("Invalid email or password")
 
         if not user.is_active:
@@ -58,3 +67,9 @@ class LoginSerializer(serializers.Serializer):
             "user_id": user.id,
             "email": user.email,
         }
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"

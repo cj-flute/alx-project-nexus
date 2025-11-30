@@ -5,13 +5,21 @@ from .serializers import (
     RegisterSerializer,
     UserSerializer,
     EmailLoginSerializer,
-    LoginSerializer)
-from rest_framework.permissions import IsAuthenticated
+    LoginSerializer,
+    CategorySerializer)
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
+    TokenVerifyView,
 )
+from .models import Category
+
 
 User = get_user_model()
 
@@ -22,7 +30,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class SomeProtectedView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 
 class UserListView(generics.ListAPIView):
@@ -44,3 +52,18 @@ class LoginView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         print(serializer.validated_data)
         return Response(serializer.validated_data, status=200)
+
+
+# Read all categories and create category
+
+class CategoryListCreateView(generics.ListCreateAPIView):
+    queryset = Category.objects.all().order_by("name")
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+# Retrieve, update, delete single category
+class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
