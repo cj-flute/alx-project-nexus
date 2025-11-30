@@ -1,18 +1,32 @@
-from rest_framework import serializers
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Category
+from .models import Category, Product
 
 User = get_user_model()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    password = serializers.CharField(
+        write_only=True,
+        style={'input_type': 'password'}
+    )
+
     class Meta:
         model = User
         fields = ['id', 'username', 'email',
                   'first_name', 'last_name', 'password']
-        extra_kwargs = {"password": {"write_only": True}}
+
+    def validate_password(self, value):
+        # Run Django's password validators
+        validate_password(value)
+        return value
 
     def create(self, validated_data):
         password = validated_data.pop("password")
@@ -23,31 +37,29 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-# SimpleJWT + Django expects username but it need to overrriden by creating this class
-
-class EmailLoginSerializer(serializers.Serializer):
-    # username_field = "username"
-    pass
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = "__all__"
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name"
+        ]
 
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(
+        write_only=True,
+        style={"input_type": "password"}
+    )
 
     def validate(self, attrs):
         email = attrs.get("email")
         password = attrs.get("password")
-        # Try to find the user by email and verify the password. Using
-        # `authenticate(username=email, ...)` assumes the project's
-        # `USERNAME_FIELD` is `email` (or a custom authentication backend
-        # that supports email). A quick, robust approach is to lookup the
-        # user by email and call `check_password`.
+
         try:
             user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
@@ -64,8 +76,7 @@ class LoginSerializer(serializers.Serializer):
         return {
             "refresh": str(refresh),
             "access": str(refresh.access_token),
-            "user_id": user.id,
-            "email": user.email,
+            "user": UserSerializer(user).data
         }
 
 
@@ -73,3 +84,26 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+
+    def validate_name(self, value):
+        if len(value) < 3:
+            raise serializers.ValidationError(
+                "Category name must be at least 3 characters.")
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    category_name = serializers.ReadOnlyField(source="category.name")
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "name",
+            "category",
+            "category_name",
+            "price",
+            "description",
+            "stock",
+            "created_at",
+            "updated_at",
+        ]

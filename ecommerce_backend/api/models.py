@@ -31,7 +31,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="products")
-    price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     stock = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -40,7 +40,7 @@ class Product(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=['price']),
-            models.Index(fields=['category']),
+            # models.Index(fields=['category']),
         ]
         ordering = ['-created_at']
 

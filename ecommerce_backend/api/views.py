@@ -1,12 +1,13 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from .serializers import (
     RegisterSerializer,
     UserSerializer,
-    EmailLoginSerializer,
     LoginSerializer,
-    CategorySerializer)
+    CategorySerializer,
+    ProductSerializer,
+)
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAdminUser,
@@ -18,7 +19,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from .models import Category
+from .models import Category, Product
 
 
 User = get_user_model()
@@ -30,7 +31,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class SomeProtectedView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 
 class UserListView(generics.ListAPIView):
@@ -40,18 +41,13 @@ class UserListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class EmailLoginView(TokenObtainPairView):
-    serializer_class = EmailLoginSerializer
-
-
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
-        return Response(serializer.validated_data, status=200)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 # Read all categories and create category
@@ -66,4 +62,16 @@ class CategoryListCreateView(generics.ListCreateAPIView):
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class ProductListCreateView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
