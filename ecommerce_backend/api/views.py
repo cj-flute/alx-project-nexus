@@ -70,7 +70,9 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 # Read all products and create product
 class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
+    # queryset = Product.objects.all()
+    # Optimizing queryset using select_related & prefetch_related
+    queryset = Product.objects.select_related("category").all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 

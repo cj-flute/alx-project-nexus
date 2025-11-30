@@ -30,10 +30,10 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name="products")
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+        Category, on_delete=models.CASCADE, related_name="products", db_index=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
     description = models.TextField()
-    stock = models.PositiveIntegerField(default=0)
+    stock = models.PositiveIntegerField(default=0, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

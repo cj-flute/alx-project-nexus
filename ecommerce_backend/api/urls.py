@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls import include
 from .views import (
     RegisterView,
     UserListView,
@@ -29,3 +31,8 @@ urlpatterns = [
          name="product_list_create"),
     path("products/<int:pk>/", ProductDetailView.as_view(), name="product_detail"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]
