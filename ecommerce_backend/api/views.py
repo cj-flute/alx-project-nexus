@@ -19,6 +19,9 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
+from .filters import ProductFilter
 from .models import Category, Product
 
 
@@ -38,7 +41,7 @@ class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     # Remember to change to IsAdminUser
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAdminUser]
 
 
 class LoginView(generics.GenericAPIView):
@@ -65,12 +68,23 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
+# Read all products and create product
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_class = ProductFilter
 
+    # Sorting fields
+    ordering_fields = ['price', 'created_at', "stock"]
+
+    # Search fields
+    search_fields = ['name', 'description']
+
+
+# Retrieve, update, delete single product
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
