@@ -89,6 +89,7 @@ class CategorySerializer(serializers.ModelSerializer):
         if len(value) < 3:
             raise serializers.ValidationError(
                 "Category name must be at least 3 characters.")
+        return value
 
 
 class ProductSerializer(serializers.ModelSerializer):

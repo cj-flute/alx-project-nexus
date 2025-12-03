@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, status
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from .serializers import (
@@ -14,11 +14,6 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
 )
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from .filters import ProductFilter
@@ -70,8 +65,6 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 # Read all products and create product
 class ProductListCreateView(generics.ListCreateAPIView):
-    # queryset = Product.objects.all()
-    # Optimizing queryset using select_related & prefetch_related
     queryset = Product.objects.select_related("category").all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
