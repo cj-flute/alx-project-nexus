@@ -73,7 +73,7 @@ class ProductListCreateView(generics.ListCreateAPIView):
     filterset_class = ProductFilter
 
     # Sorting fields
-    ordering_fields = ['price', 'created_at', "stock"]
+    ordering_fields = ["price", "created_at", "stock"]
 
     # Search fields
     search_fields = ['name', 'description']
