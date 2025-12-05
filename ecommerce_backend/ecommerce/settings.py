@@ -16,7 +16,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "ecormmerce_backend.onrender.com",
-                 "https://alx-project-nexus-1-i5bw.onrender.com"]
+                 "alx-project-nexus-1-i5bw.onrender.com", "my-backend.onrender.com"]
 
 
 # Application definition
