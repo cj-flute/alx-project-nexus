@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = os.getenv("DEBUG") == "False"
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "ecormmerce_backend.onrender.com",
                  "alx-project-nexus-1-i5bw.onrender.com", "my-backend.onrender.com"]
